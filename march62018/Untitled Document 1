@@ -1,0 +1,149 @@
+import org.apache.spark.sql.Row
+
+
+scala> import org.apache.spark.sql.types._
+
+val p = spark.read.option("delimiter","|").csv("/home/manoj/Documents/Nirmal/march62018/hdfs.csv")
+
+val rows: org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]=p.rdd
+
+
+
+
+val customSchema = StructType(Array(
+     |   StructField("date1", StringType, true),
+     |   StructField("os_id", StringType, true),
+     | StructField("date2", StringType, true),
+     |   StructField("os1_id", StringType, true),
+     | StructField("date3", StringType, true)
+     | ))
+customSchema: org.apache.spark.sql.types.StructType = StructType(StructField(date1,StringType,true), StructField(os_id,StringType,true), StructField(date2,StringType,true), StructField(os1_id,StringType,true), StructField(date3,StringType,true))
+
+scala> val p = spark.read.option("delimiter","|").schema(customSchema).load("/home/manoj/Documents/Nirmal/march62018/hdfs.csv")
+p: org.apache.spark.sql.DataFrame = [date1: string, os_id: string ... 3 more fields]
+
+scala> p.printSchema
+root
+ |-- date1: string (nullable = true)
+ |-- os_id: string (nullable = true)
+ |-- date2: string (nullable = true)
+ |-- os1_id: string (nullable = true)
+ |-- date3: string (nullable = true)
+
+
+
+def functionExample(a:String)  {
+val result = a.split('|')
+result.foreach(println(_))
+for (v <- result) {
+    println(v)
+}
+}
+
+
+import java.util.StringTokenizer
+
+def tkn(a:String)  {
+val tokenizer = new StringTokenizer(a, "|");
+println(tokenizer.nextToken)
+tokenizer.nextToken
+println(tokenizer.nextToken)
+tokenizer.nextToken
+println(tokenizer.nextToken)
+}
+
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.time._;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.util._;
+
+
+
+
+import java.time.LocalDate
+def tkn(a:String): String =  {
+val tokenizer = new StringTokenizer(a, "|");
+val getele1=tokenizer.nextToken
+val date = getele1.substring(0,2);
+val date1 = Integer.parseInt(date);
+val mon = getele1.substring(2,5);
+val year = getele1.substring(5,9);
+val year1 = Integer.parseInt(year);
+val first = datadef(date1,mon,year1).toString
+val getele2=tokenizer.nextToken
+val getele3=tokenizer.nextToken
+val ele3date = getele3.substring(0,2);
+val ele3date1 = Integer.parseInt(ele3date);
+val ele3mon = getele3.substring(2,5);
+val ele3year = getele3.substring(5,9);
+val ele3year1 = Integer.parseInt(ele3year);
+val second = datadef(ele3date1,ele3mon,ele3year1).toString
+val getele4=tokenizer.nextToken
+val getele5=tokenizer.nextToken
+val ele5date = getele5.substring(0,2);
+val ele5date1 = Integer.parseInt(ele5date);
+val ele5mon = getele5.substring(2,5);
+val ele5year = getele5.substring(5,9);
+val ele5year1 = Integer.parseInt(ele5year);
+val third = datadef(ele5date1,ele5mon,ele5year1).toString
+return first+" 0:00:00,"+getele2+","+second+" 0:00:00,"+getele4+","+third+" 0:00:00".toString
+}
+
+def datadef(date:Int,mon:String,year:Int): String = {
+if(mon=="JAN") {
+return LocalDate.of(year,1,date).toString
+}
+else if(mon=="FEB") {
+return LocalDate.of(year,2,date).toString
+}
+else if(mon=="MAR") {
+return LocalDate.of(year,3,date).toString
+}
+else if(mon=="APR") {
+return LocalDate.of(year,4,date).toString
+}
+else if(mon=="MAY") {
+return LocalDate.of(year,5,date).toString
+}
+else if(mon=="JUN") {
+return LocalDate.of(year,6,date).toString
+}
+else if(mon=="JUL") {
+return LocalDate.of(year,7,date).toString
+}
+else if(mon=="AUG") {
+return LocalDate.of(year,8,date).toString
+}
+else if(mon=="SEP") {
+return LocalDate.of(year,9,date).toString
+}
+else if(mon=="OCT") {
+return LocalDate.of(year,10,date).toString
+}
+else if(mon=="NOV") {
+return LocalDate.of(year,11,date).toString
+}
+else if(mon=="DEC") {
+return LocalDate.of(year,12,date).toString
+}
+else return "null"
+}
+
+import scala.collection.mutable.ListBuffer
+
+val data = sc.textFile("/home/manoj/Documents/Nirmal/march62018/hdfs.csv")
+var datalist = new ListBuffer[String]()
+for(line <- data.collect()){
+datalist += tkn(line)
+}
+
+val dfile=datalist.toDF
+
+dfile.coalesce(1).write.text("/home/manoj/Documents/Nirmal/march62018/out3")
+

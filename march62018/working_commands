@@ -1,0 +1,76 @@
+import scala.collection.mutable.ListBuffer
+import java.time.LocalDate
+
+def datadef(date:Int,mon:String,year:Int): String = {
+if(mon=="JAN") {
+return LocalDate.of(year,1,date).toString
+}
+else if(mon=="FEB") {
+return LocalDate.of(year,2,date).toString
+}
+else if(mon=="MAR") {
+return LocalDate.of(year,3,date).toString
+}
+else if(mon=="APR") {
+return LocalDate.of(year,4,date).toString
+}
+else if(mon=="MAY") {
+return LocalDate.of(year,5,date).toString
+}
+else if(mon=="JUN") {
+return LocalDate.of(year,6,date).toString
+}
+else if(mon=="JUL") {
+return LocalDate.of(year,7,date).toString
+}
+else if(mon=="AUG") {
+return LocalDate.of(year,8,date).toString
+}
+else if(mon=="SEP") {
+return LocalDate.of(year,9,date).toString
+}
+else if(mon=="OCT") {
+return LocalDate.of(year,10,date).toString
+}
+else if(mon=="NOV") {
+return LocalDate.of(year,11,date).toString
+}
+else if(mon=="DEC") {
+return LocalDate.of(year,12,date).toString
+}
+else return "null"
+}
+
+
+def tkn(str:String): String =  {
+val Array(str1,str2,str3,str4,str5)=str.split("\\|")
+def dastr(a:String): String = {
+if(a.isEmpty()){
+return a
+}
+else{
+val ele3date = a.substring(0,2)
+val ele3date1 = Integer.parseInt(ele3date)
+val ele3mon = a.substring(2,5)
+val ele3year = a.substring(5,9)
+val ele3year1 = Integer.parseInt(ele3year)
+val second = datadef(ele3date1,ele3mon,ele3year1).toString
+return second+" 0:00:00"
+}
+}
+val data1 = dastr(str1)
+val data2 = dastr(str3)
+val data3 = dastr(str5)
+return data1+","+str2+","+data2+","+str4+","+data3
+}
+
+
+val data = sc.textFile("/home/manoj/Documents/Nirmal/march62018/newhdfs.txt")
+var datalist = new ListBuffer[String]()
+for(line <- data.collect()){
+datalist += tkn(line)
+}
+
+val dfile=datalist.toDF
+
+dfile.coalesce(1).write.text("/home/manoj/Documents/Nirmal/march62018/out32")
